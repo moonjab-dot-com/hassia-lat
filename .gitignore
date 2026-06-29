@@ -1,0 +1,16 @@
+__pycache__/
+*.pyc
+.venv/
+venv/
+.claude/
+
+# Dataset is large raw data — not committed. The trained model in models/
+# IS committed (small enough, and the deploy target needs it at runtime).
+data/
+Hassia Database/
+
+# Flask runtime
+app/static/uploads/*
+!app/static/uploads/.gitkeep
+*.log
+.env
