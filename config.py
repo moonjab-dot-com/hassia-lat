@@ -24,12 +24,14 @@ CLASSIFICATION_REPORT_PATH = os.path.join(MODEL_DIR, "classification_report.txt"
 
 # Model / training hyperparameters
 IMG_SIZE = (224, 224)
-BATCH_SIZE = 32
-EPOCHS_FROZEN = 10      # head-only training with the backbone frozen
-EPOCHS_FINE_TUNE = 10   # fine-tuning with the top backbone layers unfrozen
+BATCH_SIZE = 16          # smaller batch helps on a ~1000-image dataset
+EPOCHS_FROZEN = 25       # head-only training with the backbone frozen
+EPOCHS_FINE_TUNE = 40    # fine-tuning with the top backbone layers unfrozen
 LEARNING_RATE_FROZEN = 1e-3
 LEARNING_RATE_FINE_TUNE = 1e-5
-BACKBONE = "efficientnetb0"  # "efficientnetb0" or "resnet50"
+EARLY_STOPPING_PATIENCE = 8
+UNFREEZE_LAST_N_LAYERS = 60  # how many backbone layers to unfreeze during fine-tuning
+BACKBONE = os.environ.get("HASSIA_BACKBONE", "efficientnetb0")  # "efficientnetb0" or "resnet50"
 
 # Live-video detection (phase 2): color/contour segmentation finds candidate
 # avocado/leaf regions per frame before each crop is sent to the classifier.

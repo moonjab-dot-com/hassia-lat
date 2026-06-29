@@ -76,12 +76,17 @@ def main():
     model, base = build_model(num_classes=len(class_names))
 
     compile_for_frozen_training(model)
-    print("\n=== Phase 1: training classifier head (backbone frozen) ===")
+    print(f"\n=== Backbone: {config.BACKBONE} ===")
+    print("=== Phase 1: training classifier head (backbone frozen) ===")
     history_frozen = model.fit(
         train_ds,
         validation_data=valid_ds,
         epochs=config.EPOCHS_FROZEN,
-        callbacks=[tf.keras.callbacks.EarlyStopping(patience=3, restore_best_weights=True)],
+        callbacks=[
+            tf.keras.callbacks.EarlyStopping(
+                patience=config.EARLY_STOPPING_PATIENCE, restore_best_weights=True
+            )
+        ],
     )
 
     compile_for_fine_tuning(model, base)
@@ -91,7 +96,12 @@ def main():
         validation_data=valid_ds,
         epochs=config.EPOCHS_FINE_TUNE,
         callbacks=[
-            tf.keras.callbacks.EarlyStopping(patience=3, restore_best_weights=True),
+            tf.keras.callbacks.EarlyStopping(
+                patience=config.EARLY_STOPPING_PATIENCE, restore_best_weights=True
+            ),
+            tf.keras.callbacks.ReduceLROnPlateau(
+                monitor="val_loss", factor=0.5, patience=4, min_lr=1e-7
+            ),
             tf.keras.callbacks.ModelCheckpoint(config.MODEL_PATH, save_best_only=True, monitor="val_accuracy"),
         ],
     )

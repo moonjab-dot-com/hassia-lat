@@ -44,7 +44,9 @@ def compile_for_frozen_training(model):
     )
 
 
-def compile_for_fine_tuning(model, base, unfreeze_last_n=30):
+def compile_for_fine_tuning(model, base, unfreeze_last_n=None):
+    if unfreeze_last_n is None:
+        unfreeze_last_n = config.UNFREEZE_LAST_N_LAYERS
     base.trainable = True
     for layer in base.layers[:-unfreeze_last_n]:
         layer.trainable = False

@@ -26,10 +26,12 @@ def load_datasets():
     test_ds = _load_split(config.TEST_DIR, shuffle=False)
 
     augment = tf.keras.Sequential([
-        tf.keras.layers.RandomFlip("horizontal"),
-        tf.keras.layers.RandomRotation(0.1),
-        tf.keras.layers.RandomZoom(0.1),
-        tf.keras.layers.RandomContrast(0.1),
+        tf.keras.layers.RandomFlip("horizontal_and_vertical"),
+        tf.keras.layers.RandomRotation(0.25),
+        tf.keras.layers.RandomZoom(0.2),
+        tf.keras.layers.RandomContrast(0.2),
+        tf.keras.layers.RandomBrightness(0.2),
+        tf.keras.layers.RandomTranslation(0.1, 0.1),
     ])
     train_ds = train_ds.map(lambda x, y: (augment(x, training=True), y))
 
