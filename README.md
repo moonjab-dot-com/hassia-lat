@@ -38,16 +38,24 @@ run.py                  # punto de entrada de la app
 ## Entrenamiento
 
 ```
-pip install -r requirements.txt
+pip install -r requirements-training.txt
 python training/train.py
+python training/export_tflite.py
 ```
 
-Genera en `models/`: `hassia_model.keras`, `class_names.json`,
-`confusion_matrix.png`, `training_history.png` y `classification_report.txt`.
+Genera en `models/`: `hassia_model.keras`, `hassia_model.tflite`,
+`class_names.json`, `confusion_matrix.png`, `training_history.png` y
+`classification_report.txt`.
+
+La app Flask solo usa `hassia_model.tflite` (vía `requirements.txt`, sin
+TensorFlow completo) — esto evita quedarse sin memoria en planes gratuitos
+de hosting como Render (512MB RAM), donde cargar TensorFlow + Keras
+completo agotaba el límite.
 
 ## Ejecutar la app
 
 ```
+pip install -r requirements.txt
 python run.py
 ```
 

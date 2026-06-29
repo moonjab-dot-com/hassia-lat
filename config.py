@@ -16,6 +16,7 @@ TEST_DIR = os.path.join(DATASET_DIR, "test")
 # Model artifacts
 MODEL_DIR = os.path.join(BASE_DIR, "models")
 MODEL_PATH = os.path.join(MODEL_DIR, "hassia_model.keras")
+TFLITE_MODEL_PATH = os.path.join(MODEL_DIR, "hassia_model.tflite")
 CLASS_NAMES_PATH = os.path.join(MODEL_DIR, "class_names.json")
 CONFUSION_MATRIX_PATH = os.path.join(MODEL_DIR, "confusion_matrix.png")
 TRAINING_HISTORY_PATH = os.path.join(MODEL_DIR, "training_history.png")
