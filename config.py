@@ -24,13 +24,13 @@ CLASSIFICATION_REPORT_PATH = os.path.join(MODEL_DIR, "classification_report.txt"
 
 # Model / training hyperparameters
 IMG_SIZE = (224, 224)
-BATCH_SIZE = 16          # smaller batch helps on a ~1000-image dataset
-EPOCHS_FROZEN = int(os.environ.get("HASSIA_EPOCHS_FROZEN", 25))      # head-only training with the backbone frozen
-EPOCHS_FINE_TUNE = int(os.environ.get("HASSIA_EPOCHS_FINE_TUNE", 40))  # fine-tuning with the top backbone layers unfrozen
+BATCH_SIZE = 32
+EPOCHS_FROZEN = int(os.environ.get("HASSIA_EPOCHS_FROZEN", 30))
+EPOCHS_FINE_TUNE = int(os.environ.get("HASSIA_EPOCHS_FINE_TUNE", 50))
 LEARNING_RATE_FROZEN = 1e-3
-LEARNING_RATE_FINE_TUNE = 1e-5
-EARLY_STOPPING_PATIENCE = int(os.environ.get("HASSIA_PATIENCE", 8))
-UNFREEZE_LAST_N_LAYERS = int(os.environ.get("HASSIA_UNFREEZE", 60))  # how many backbone layers to unfreeze during fine-tuning
+LEARNING_RATE_FINE_TUNE = 5e-6
+EARLY_STOPPING_PATIENCE = int(os.environ.get("HASSIA_PATIENCE", 10))
+UNFREEZE_LAST_N_LAYERS = int(os.environ.get("HASSIA_UNFREEZE", 20))
 BACKBONE = os.environ.get("HASSIA_BACKBONE", "efficientnetb0")  # "efficientnetb0" or "resnet50"
 
 # Live-video detection (phase 2): color/contour segmentation finds candidate

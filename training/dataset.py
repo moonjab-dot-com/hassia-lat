@@ -33,8 +33,9 @@ def load_datasets():
         tf.keras.layers.RandomBrightness(0.2),
         tf.keras.layers.RandomTranslation(0.1, 0.1),
     ])
-    train_ds = train_ds.map(lambda x, y: (augment(x, training=True), y))
-
+    train_ds = train_ds.map(lambda x, y: (augment(x, training=True), y),
+                            num_parallel_calls=tf.data.AUTOTUNE)
+    train_ds = train_ds.shuffle(buffer_size=512, reshuffle_each_iteration=True)
     train_ds = train_ds.prefetch(tf.data.AUTOTUNE)
     valid_ds = valid_ds.prefetch(tf.data.AUTOTUNE)
     test_ds = test_ds.prefetch(tf.data.AUTOTUNE)

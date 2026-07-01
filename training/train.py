@@ -14,11 +14,29 @@ import tensorflow as tf
 import matplotlib
 matplotlib.use("Agg")
 import matplotlib.pyplot as plt
+from pathlib import Path
 from sklearn.metrics import classification_report, confusion_matrix, ConfusionMatrixDisplay
+from sklearn.utils.class_weight import compute_class_weight
 
 import config
 from training.dataset import load_datasets
 from training.model import build_model, compile_for_frozen_training, compile_for_fine_tuning
+
+
+def compute_weights(class_names):
+    """Count files on disk to compute balanced class weights."""
+    counts = []
+    for cls in class_names:
+        p = Path(config.TRAIN_DIR) / cls
+        counts.append(len(list(p.glob("*.*"))))
+    labels = []
+    for i, c in enumerate(counts):
+        labels.extend([i] * c)
+    labels = np.array(labels)
+    weights = compute_class_weight("balanced", classes=np.unique(labels), y=labels)
+    cw = dict(enumerate(weights))
+    print(f"Class weights: { {class_names[i]: round(w, 3) for i, w in cw.items()} }")
+    return cw
 
 
 def plot_history(history_frozen, history_fine_tune):
@@ -73,6 +91,8 @@ def main():
     with open(config.CLASS_NAMES_PATH, "w", encoding="utf-8") as f:
         json.dump(class_names, f, ensure_ascii=False, indent=2)
 
+    class_weight = compute_weights(class_names)
+
     model, base = build_model(num_classes=len(class_names))
 
     compile_for_frozen_training(model)
@@ -82,10 +102,11 @@ def main():
         train_ds,
         validation_data=valid_ds,
         epochs=config.EPOCHS_FROZEN,
+        class_weight=class_weight,
         callbacks=[
             tf.keras.callbacks.EarlyStopping(
                 patience=config.EARLY_STOPPING_PATIENCE, restore_best_weights=True
-            )
+            ),
         ],
     )
 
@@ -95,6 +116,7 @@ def main():
         train_ds,
         validation_data=valid_ds,
         epochs=config.EPOCHS_FINE_TUNE,
+        class_weight=class_weight,
         callbacks=[
             tf.keras.callbacks.EarlyStopping(
                 patience=config.EARLY_STOPPING_PATIENCE, restore_best_weights=True
@@ -102,7 +124,9 @@ def main():
             tf.keras.callbacks.ReduceLROnPlateau(
                 monitor="val_loss", factor=0.5, patience=4, min_lr=1e-7
             ),
-            tf.keras.callbacks.ModelCheckpoint(config.MODEL_PATH, save_best_only=True, monitor="val_accuracy"),
+            tf.keras.callbacks.ModelCheckpoint(
+                config.MODEL_PATH, save_best_only=True, monitor="val_accuracy"
+            ),
         ],
     )
 

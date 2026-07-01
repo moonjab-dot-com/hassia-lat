@@ -30,6 +30,10 @@ def build_model(num_classes):
     x = preprocess(inputs)
     x = base(x, training=False)
     x = tf.keras.layers.GlobalAveragePooling2D()(x)
+    x = tf.keras.layers.BatchNormalization()(x)
+    x = tf.keras.layers.Dropout(0.4)(x)
+    x = tf.keras.layers.Dense(256, activation="relu",
+                               kernel_regularizer=tf.keras.regularizers.l2(1e-4))(x)
     x = tf.keras.layers.Dropout(0.3)(x)
     outputs = tf.keras.layers.Dense(num_classes, activation="softmax")(x)
     model = tf.keras.Model(inputs, outputs)
