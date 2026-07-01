@@ -25,12 +25,12 @@ CLASSIFICATION_REPORT_PATH = os.path.join(MODEL_DIR, "classification_report.txt"
 # Model / training hyperparameters
 IMG_SIZE = (224, 224)
 BATCH_SIZE = 16          # smaller batch helps on a ~1000-image dataset
-EPOCHS_FROZEN = 25       # head-only training with the backbone frozen
-EPOCHS_FINE_TUNE = 40    # fine-tuning with the top backbone layers unfrozen
+EPOCHS_FROZEN = int(os.environ.get("HASSIA_EPOCHS_FROZEN", 25))      # head-only training with the backbone frozen
+EPOCHS_FINE_TUNE = int(os.environ.get("HASSIA_EPOCHS_FINE_TUNE", 40))  # fine-tuning with the top backbone layers unfrozen
 LEARNING_RATE_FROZEN = 1e-3
 LEARNING_RATE_FINE_TUNE = 1e-5
-EARLY_STOPPING_PATIENCE = 8
-UNFREEZE_LAST_N_LAYERS = 60  # how many backbone layers to unfreeze during fine-tuning
+EARLY_STOPPING_PATIENCE = int(os.environ.get("HASSIA_PATIENCE", 8))
+UNFREEZE_LAST_N_LAYERS = int(os.environ.get("HASSIA_UNFREEZE", 60))  # how many backbone layers to unfreeze during fine-tuning
 BACKBONE = os.environ.get("HASSIA_BACKBONE", "efficientnetb0")  # "efficientnetb0" or "resnet50"
 
 # Live-video detection (phase 2): color/contour segmentation finds candidate
@@ -45,7 +45,7 @@ DETECTION_MAX_AREA_RATIO = 0.6  # discard blobs covering most of the frame (like
 DETECTION_MAX_REGIONS = 12   # cap detections per frame for latency
 
 # Flask app
-UPLOAD_FOLDER = os.path.join(BASE_DIR, "app", "static", "uploads")
+UPLOAD_FOLDER = os.environ.get("UPLOAD_FOLDER", os.path.join(BASE_DIR, "app", "static", "uploads"))
 ALLOWED_EXTENSIONS = {"png", "jpg", "jpeg"}
 MAX_CONTENT_LENGTH = 8 * 1024 * 1024  # 8 MB
 SECRET_KEY = os.environ.get("HASSIA_SECRET_KEY", "dev-secret-key-change-in-production")

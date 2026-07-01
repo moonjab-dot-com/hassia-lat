@@ -1,0 +1,10 @@
+data/
+Hassia Database/
+training/
+requirements-training.txt
+.venv/
+__pycache__/
+*.pyc
+*.log
+.env
+app/static/uploads/
